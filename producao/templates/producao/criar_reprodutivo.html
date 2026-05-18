@@ -1,0 +1,62 @@
+{% extends 'producao/base.html' %}
+
+{% block title %}Novo Evento Reprodutivo{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4><i class="bi bi-plus-circle"></i> Novo Evento Reprodutivo - RF9</h4>
+    </div>
+    <div class="card-body">
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            
+            <div class="col-md-6">
+                <label for="{{ form.animal.id_for_label }}" class="form-label">Vaca</label>
+                {{ form.animal }}
+                {% if form.animal.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.animal.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.tipo.id_for_label }}" class="form-label">Tipo de Evento</label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.tipo.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.data_evento.id_for_label }}" class="form-label">Data do Evento</label>
+                {{ form.data_evento }}
+                {% if form.data_evento.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.data_evento.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.diagnostico_gestacao.id_for_label }}" class="form-label">
+                    {{ form.diagnostico_gestacao }} Diagnóstico de Gestação Positivo
+                </label>
+                {% if form.diagnostico_gestacao.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.diagnostico_gestacao.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.previsao_parto.id_for_label }}" class="form-label">Previsão de Parto</label>
+                {{ form.previsao_parto }}
+                {% if form.previsao_parto.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.previsao_parto.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="col-12">
+                <button type="submit" class="btn btn-novo"><i class="bi bi-check-circle"></i> Registrar Evento</button>
+                <a href="{% url 'reprodutivo' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

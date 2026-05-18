@@ -1,0 +1,74 @@
+{% extends 'producao/base.html' %}
+
+{% block title %}Controle Reprodutivo {% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-gender-female"></i> Controle Reprodutivo</h2>
+    <a href="{% url 'criar_reprodutivo' %}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Nova Inseminação/Cobertura</a>
+</div>
+
+<!-- Inline de Animais (Fêmeas) para Seleção Rápida -->
+<div class="card mb-4 shadow-sm border-start border-5 border-info">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-cow"></i> Seleção Rápida de Matrizes</h5>
+    </div>
+    <div class="card-body">
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-2">
+            {% for animal in animais_femeas %}
+            <div class="col">
+                <a href="{% url 'criar_reprodutivo' %}?animal={{ animal.pk }}" class="btn btn-outline-info w-100 text-truncate" title="Registrar evento para {{ animal.identificacao }}">
+                    {{ animal.identificacao }}
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-muted">Nenhuma matriz (fêmea) cadastrada.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        {% if registros %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Tipo</th>
+                    <th>Data Evento</th>
+                    <th>Gestação</th>
+                    <th>Previsão Parto</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registros %}
+                <tr>
+                    <td><strong>{{ r.animal.identificacao }}</strong></td>
+                    <td>{{ r.get_tipo_display }}</td>
+                    <td>{{ r.data_evento|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if r.diagnostico_gestacao %}
+                        <span class="badge bg-success">Confirmada</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Não Confirmada</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ r.previsao_parto|date:"d/m/Y"|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'editar_reprodutivo' r.pk %}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'deletar_reprodutivo' r.pk %}" class="btn btn-sm btn-outline-danger" title="Deletar"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Nenhum registro reprodutivo. <a href="{% url 'criar_reprodutivo' %}">Clique aqui para registrar um novo evento.</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

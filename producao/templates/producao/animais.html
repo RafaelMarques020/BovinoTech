@@ -1,0 +1,46 @@
+{% extends 'producao/base.html' %}
+
+{% block title %}Gerenciar Animais{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-cow"></i> Gerenciar Animais</h2>
+    <a href="{% url 'criar_animal' %}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Novo Animal</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if animais %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Brinco/Nome</th>
+                    <th>Raça</th>
+                    <th>Nascimento</th>
+                    <th>Sexo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in animais %}
+                <tr>
+                    <td><strong>{{ animal.identificacao }}</strong></td>
+                    <td>{{ animal.raca }}</td>
+                    <td>{{ animal.data_nascimento|date:"d/m/Y" }}</td>
+                    <td>{{ animal.get_sexo_display }}</td>
+                    <td>
+                        <a href="{% url 'editar_animal' animal.pk %}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'deletar_animal' animal.pk %}" class="btn btn-sm btn-outline-danger" title="Deletar"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Nenhum animal cadastrado. <a href="{% url 'criar_animal' %}">Clique aqui para adicionar um novo animal.</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

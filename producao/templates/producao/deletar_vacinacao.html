@@ -1,0 +1,22 @@
+{% extends 'producao/base.html' %}
+
+{% block title %}Deletar Vacinação{% endblock %}
+
+{% block content %}
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+        <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão</h4>
+    </div>
+    <div class="card-body">
+        <p class="lead">Tem certeza que deseja deletar o registro de vacinação de <strong>{{ vacinacao.animal.identificacao }}</strong>?</p>
+        <p class="text-muted">Tipo: <strong>{{ vacinacao.tipo_vacina }}</strong> | Lote: <strong>{{ vacinacao.lote }}</strong></p>
+        <p class="text-muted">Esta ação não pode ser desfeita.</p>
+        
+        <form method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Sim, Deletar</button>
+            <a href="{% url 'vacinacao' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
