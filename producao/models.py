@@ -99,6 +99,12 @@ class Alerta(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.animal.identificacao}"
+    
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    
+    vacinacao = models.ForeignKey(Vacinacao, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
+    medicamento = models.ForeignKey(Medicamento, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
+    controle_sanitario = models.ForeignKey(ControleSanitario, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
 
 
 @receiver(post_save, sender=Vacinacao)

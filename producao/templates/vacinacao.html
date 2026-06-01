@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Vacinação{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-shield-check"></i> Registro de Vacinação</h2>
+    <a href="{% url 'criar_vacinacao' %}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Registrar Vacina</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if vacinas %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Vacina</th>
+                    <th>Lote</th>
+                    <th>Data Aplicação</th>
+                    <th>Próxima Dose</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in vacinas %}
+                <tr>
+                    <td><strong>{{ v.animal.identificacao }}</strong></td>
+                    <td>{{ v.tipo_vacina }}</td>
+                    <td>{{ v.lote }}</td>
+                    <td>{{ v.data_aplicacao|date:"d/m/Y" }}</td>
+                    <td>{{ v.proxima_dose|date:"d/m/Y"|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'editar_vacinacao' v.pk %}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'deletar_vacinacao' v.pk %}" class="btn btn-sm btn-outline-danger" title="Deletar"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Nenhum registro de vacinação. <a href="{% url 'criar_vacinacao' %}">Clique aqui para registrar uma vacinação.</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

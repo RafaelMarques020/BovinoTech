@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Controle Sanitário{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-heart-pulse"></i> Controle Sanitário</h2>
+    <a href="{% url 'criar_sanitario' %}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Novo Registro</a>
+</div>
+
+<div class="row">
+    {% for r in registros %}
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>{{ r.animal.identificacao }}</strong></span>
+                <small class="text-muted">{{ r.data_registro|date:"d/m/Y" }}</small>
+            </div>
+            <div class="card-body">
+                <h6><strong>Exame:</strong> {{ r.exame_clinico }}</h6>
+                <p><strong>Doença:</strong> {{ r.ocorrencia_doenca|default:"Nenhuma" }}</p>
+                <p class="mb-3"><strong>Medidas:</strong> {{ r.medidas_preventivas }}</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'editar_sanitario' r.pk %}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i> Editar</a>
+                    <a href="{% url 'deletar_sanitario' r.pk %}" class="btn btn-sm btn-outline-danger" title="Deletar"><i class="bi bi-trash"></i> Deletar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Nenhum registro sanitário encontrado. <a href="{% url 'criar_sanitario' %}">Clique aqui para registrar.</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

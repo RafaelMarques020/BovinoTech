@@ -3,6 +3,13 @@ from .models import (
     Animal, ProducaoLeite, Vacinacao, Medicamento, 
     ControleSanitario, ControleReprodutivo, Alerta
 )
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class RegistroForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
 
 class AnimalForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Registro Sanitário{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4><i class="bi bi-plus-circle"></i> Novo Registro Sanitário</h4>
+    </div>
+    <div class="card-body">
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            
+            <div class="col-md-6">
+                <label for="{{ form.animal.id_for_label }}" class="form-label">Vaca</label>
+                {{ form.animal }}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.data_registro.id_for_label }}" class="form-label">Data do Registro</label>
+                {{ form.data_registro }}
+            </div>
+
+            <div class="col-md-12">
+                <label for="{{ form.exame_clinico.id_for_label }}" class="form-label">Exame Clínico</label>
+                {{ form.exame_clinico }}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.ocorrencia_doenca.id_for_label }}" class="form-label">Ocorrência de Doença</label>
+                {{ form.ocorrencia_doenca }}
+            </div>
+            
+            <div class="col-md-6">
+                <label for="{{ form.medidas_preventivas.id_for_label }}" class="form-label">Medidas Preventivas</label>
+                {{ form.medidas_preventivas }}
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-check mt-4">
+                    {{ form.tem_carencia }}
+                    <label class="form-check-label" for="{{ form.tem_carencia.id_for_label }}">
+                        Possui Carência? (Gera alerta automático)
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="{{ form.dias_carencia.id_for_label }}" class="form-label">Dias de Carência</label>
+                {{ form.dias_carencia }}
+            </div>
+            
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-novo"><i class="bi bi-check-circle"></i> Registrar Controle Sanitário</button>
+                <a href="{% url 'sanitario' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4" style="color: #1a531b;">
+                <i class="bi bi-box-arrow-in-right"></i> Entrar no BovinoTech
+            </h3>
+            
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                
+                {# Exibe erros gerais de login (como usuário/senha incorretos) #}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger p-2 fs-6" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Campo Usuário -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label fw-semibold text-secondary">Usuário</label>
+                    <input type="text" name="username" id="id_username" class="form-control" required>
+                </div>
+
+                <!-- Campo Senha -->
+                <div class="mb-3">
+                    <label for="id_password" class="form-label fw-semibold text-secondary">Senha</label>
+                    <input type="password" name="password" id="id_password" class="form-control" required>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-novo py-2 fw-bold">
+                        Acessar Sistema
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-3">
+                <span class="text-muted small">Não tem uma conta?</span>
+                <a href="{% url 'registro' %}" class="small fw-bold" style="color: #1a531b; text-decoration: none;"> Cadastre-se</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

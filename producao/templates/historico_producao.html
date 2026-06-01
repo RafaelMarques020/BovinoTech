@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Produção{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-clock-history"></i> Histórico de Produção</h2>
+    <a href="{% url 'lancar_producao' %}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Novo Lançamento</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-success text-white">
+        <p class="mb-0">Armazenamento de dados históricos para análise de tendências de produção ao longo do tempo.</p>
+    </div>
+    <div class="card-body">
+        {% if historico %}
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Data</th>
+                    <th>Período</th>
+                    <th>Animal</th>
+                    <th>Quantidade (Litros)</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in historico %}
+                <tr>
+                    <td><strong>{{ registro.data|date:"d/m/Y" }}</strong></td>
+                    <td>
+                        {% if registro.periodo == 'M' %}
+                            <span class="badge bg-warning text-dark">Manhã</span>
+                        {% else %}
+                            <span class="badge bg-info">Tarde</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ registro.animal.identificacao }}</td>
+                    <td>
+                        <span class="badge bg-success">{{ registro.quantidade_litros }} L</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'editar_producao' registro.pk %}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'deletar_producao' registro.pk %}" class="btn btn-sm btn-outline-danger" title="Deletar"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Nenhum registro de produção encontrado. <a href="{% url 'lancar_producao' %}">Clique aqui para lançar uma ordenha.</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
