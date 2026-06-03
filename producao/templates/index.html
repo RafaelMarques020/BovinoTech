@@ -64,10 +64,10 @@
     <div class="card-body p-0">
         <ul class="list-group list-group-flush">
             {% for alerta in alertas %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'marcar_alerta_lido' alerta.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 {{ alerta.mensagem }}
                 <small class="text-muted">{{ alerta.data_alerta|date:"d/m/Y" }}</small>
-            </li>
+            </a>
             {% endfor %}
         </ul>
     </div>

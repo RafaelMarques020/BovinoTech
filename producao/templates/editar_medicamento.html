@@ -12,7 +12,7 @@
             {% csrf_token %}
             
             <div class="col-md-6">
-                <label for="{{ form.animal.id_for_label }}" class="form-label">Vaca</label>
+                <label for="{{ form.animal.id_for_label }}" class="form-label">Animal</label>
                 {{ form.animal }}
                 {% if form.animal.errors %}
                     <div class="alert alert-danger mt-2">{{ form.animal.errors }}</div>

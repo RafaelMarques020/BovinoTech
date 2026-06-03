@@ -23,6 +23,10 @@ class AnimalForm(forms.ModelForm):
         }
 
 class ProducaoLeiteForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProducaoLeiteForm, self).__init__(*args, **kwargs)
+        self.fields['animal'].queryset = Animal.objects.filter(sexo='F')
+
     class Meta:
         model = ProducaoLeite
         fields = ['animal', 'data', 'periodo', 'quantidade_litros']

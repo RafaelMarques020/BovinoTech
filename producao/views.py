@@ -73,8 +73,8 @@ def controle_individual(request):
     hoje = date.today()
     primeiro_dia_mes = hoje.replace(day=1)
     
-    # Total produzido por cada vaca no mês atual
-    animais = Animal.objects.annotate(
+    # Total produzido por cada vaca no mês atual (apenas fêmeas)
+    animais = Animal.objects.filter(sexo='F').annotate(
         total_produzido_mes=Sum('producoes__quantidade_litros', filter=models.Q(producoes__data__gte=primeiro_dia_mes))
     ).order_by('-total_produzido_mes')
     
@@ -92,9 +92,9 @@ def controle_individual(request):
 def historico_producao(request):
     animal_id = request.GET.get('animal')
     if animal_id:
-        historico = ProducaoLeite.objects.filter(animal_id=animal_id).order_by('-data')
+        historico = ProducaoLeite.objects.filter(animal_id=animal_id, animal__sexo='F').order_by('-data')
     else:
-        historico = ProducaoLeite.objects.all().order_by('-data')
+        historico = ProducaoLeite.objects.filter(animal__sexo='F').order_by('-data')
     return render(request, 'historico_producao.html', {'historico': historico})
 
 def editar_producao(request, pk):
@@ -284,3 +284,11 @@ def marcar_alerta_como_lido(request, pk):
     alerta.lido = True
     alerta.save()
     return redirect('lista_alertas')
+
+# Nova Área: Controle de Bezerros
+def controle_bezerros(request):
+    # Consideramos bezerros animais com menos de 1 ano (365 dias)
+    um_ano_atras = date.today() - timedelta(days=365)
+    bezerros = Animal.objects.filter(data_nascimento__gte=um_ano_atras).order_by('-data_nascimento')
+    
+    return render(request, 'bezerros.html', {'bezerros': bezerros})

@@ -32,6 +32,7 @@ urlpatterns = [
     path('relatorios/', views.relatorios, name='relatorios'),
     path('alertas/', views.lista_alertas, name='lista_alertas'),
     path('alertas/<int:pk>/lido/', views.marcar_alerta_como_lido, name='marcar_alerta_lido'),
+    path('bezerros/', views.controle_bezerros, name='controle_bezerros'),
     path('registro/', views.registrar_usuario, name='registro'),
     path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 ]
