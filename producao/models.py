@@ -16,6 +16,7 @@ class PerfilUsuario(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.get_perfil_display()}"
 
+
 class Animal(models.Model):
     SEXO_CHOICES = [('M', 'Macho'), ('F', 'Fêmea')]
     identificacao = models.CharField(max_length=100, unique=True, verbose_name="Brinco/Nome")
@@ -26,6 +27,20 @@ class Animal(models.Model):
     def __str__(self):
         return self.identificacao
 
+
+class ProducaoDiariaPropriedade(models.Model):
+    data = models.DateField(unique=True, verbose_name="Data da Produção")
+    volume_total_litros = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Volume Total (Litros)")
+    observacoes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Produção Diária da Propriedade"
+        verbose_name_plural = "Produções Diárias da Propriedade"
+
+    def __str__(self):
+        return f"Total Propriedade - {self.data}: {self.volume_total_litros}L"
+
+
 class ProducaoLeite(models.Model):
     PERIODO_CHOICES = [('M', 'Manhã'), ('T', 'Tarde')]
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='producoes')
@@ -35,6 +50,7 @@ class ProducaoLeite(models.Model):
 
     def __str__(self):
         return f"{self.animal.identificacao} - {self.data} ({self.get_periodo_display()}) - {self.quantidade_litros}L"
+
 
 class Vacinacao(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
@@ -48,17 +64,19 @@ class Vacinacao(models.Model):
     def __str__(self):
         return f"{self.animal.identificacao} - {self.tipo_vacina}"
 
+
 class Medicamento(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
     nome_medicamento = models.CharField(max_length=100)
     dosagem = models.CharField(max_length=50)
     data_inicio = models.DateField()
     tem_carencia = models.BooleanField(default=True, verbose_name="Possui Carência?")
-    periodo_carencia_dias = models.IntegerField(default=0, help_text="Dias sem poder consumir o leite")
+    periodo_carencia_dias = models.IntegerField(default=0, help_text="Dias de carência para o consumo do leite")
     data_fim_carencia = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.animal.identificacao} - {self.nome_medicamento}"
+
 
 class ControleSanitario(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
@@ -72,6 +90,7 @@ class ControleSanitario(models.Model):
     def __str__(self):
         return f"{self.animal.identificacao} - {self.data_registro}"
 
+
 class ControleReprodutivo(models.Model):
     TIPO_CHOICES = [('INS', 'Inseminação'), ('COB', 'Cobertura')]
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, limit_choices_to={'sexo': 'F'})
@@ -82,6 +101,7 @@ class ControleReprodutivo(models.Model):
 
     def __str__(self):
         return f"{self.animal.identificacao} - {self.get_tipo_display()} - {self.data_evento}"
+
 
 class Alerta(models.Model):
     TIPO_ALERTA = [
@@ -96,15 +116,14 @@ class Alerta(models.Model):
     mensagem = models.TextField()
     data_alerta = models.DateField(auto_now_add=True)
     lido = models.BooleanField(default=False)
+    
+    # Chaves de volta para corrigir o erro das AlertaInline do admin.py
+    vacinacao = models.ForeignKey(Vacinacao, on_delete=models.CASCADE, null=True, blank=True)
+    medicamento = models.ForeignKey(Medicamento, on_delete=models.CASCADE, null=True, blank=True)
+    controle_sanitario = models.ForeignKey(ControleSanitario, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.animal.identificacao}"
-    
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
-    
-    vacinacao = models.ForeignKey(Vacinacao, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
-    medicamento = models.ForeignKey(Medicamento, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
-    controle_sanitario = models.ForeignKey(ControleSanitario, on_delete=models.SET_NULL, null=True, blank=True, related_name='alertas')
 
 
 @receiver(post_save, sender=Vacinacao)
@@ -113,6 +132,7 @@ def alerta_vacinacao(sender, instance, created, **kwargs):
         if instance.proxima_dose:
             Alerta.objects.create(
                 animal=instance.animal,
+                vacinacao=instance,
                 tipo='VAC',
                 mensagem=f"Próxima dose da vacina {instance.tipo_vacina} agendada para {instance.proxima_dose.strftime('%d/%m/%Y')}."
             )
@@ -120,6 +140,7 @@ def alerta_vacinacao(sender, instance, created, **kwargs):
             data_liberacao = instance.data_aplicacao + timedelta(days=instance.dias_carencia)
             Alerta.objects.create(
                 animal=instance.animal,
+                vacinacao=instance,
                 tipo='CAR',
                 mensagem=f"Animal em carência (Vacina: {instance.tipo_vacina}). Leite liberado em: {data_liberacao.strftime('%d/%m/%Y')}."
             )
@@ -131,6 +152,7 @@ def alerta_medicamento(sender, instance, created, **kwargs):
             data_liberacao = instance.data_inicio + timedelta(days=instance.periodo_carencia_dias)
             Alerta.objects.create(
                 animal=instance.animal,
+                medicamento=instance,
                 tipo='CAR',
                 mensagem=f"Animal em carência (Medicamento: {instance.nome_medicamento}). Leite liberado em: {data_liberacao.strftime('%d/%m/%Y')}."
             )
@@ -141,6 +163,7 @@ def alerta_sanitario(sender, instance, created, **kwargs):
         if instance.ocorrencia_doenca:
             Alerta.objects.create(
                 animal=instance.animal,
+                controle_sanitario=instance,
                 tipo='SAN',
                 mensagem=f"Ocorrência de doença registrada: {instance.ocorrencia_doenca}."
             )
@@ -148,6 +171,7 @@ def alerta_sanitario(sender, instance, created, **kwargs):
             data_liberacao = instance.data_registro + timedelta(days=instance.dias_carencia)
             Alerta.objects.create(
                 animal=instance.animal,
+                controle_sanitario=instance,
                 tipo='CAR',
                 mensagem=f"Animal em carência (Tratamento Sanitário). Leite liberado em: {data_liberacao.strftime('%d/%m/%Y')}."
             )
